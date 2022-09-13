@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import json
 import logging
 import re
@@ -306,7 +307,9 @@ class Operation(FirstClassObjectInterface, BaseObject):
                                                technique_name=step.ability.technique_name,
                                                technique_id=step.ability.technique_id))
                 if output and step.output:
-                    step_report['output'] = self.decode_bytes(file_svc.read_result_file(step.unique))
+                    results_dict_b64 = file_svc.read_result_file(step.unique)
+                    results_dict_string = self.decode_bytes(results_dict_b64)
+                    step_report['output'] = json.loads(results_dict_string)
                 if step.agent_reported_time:
                     step_report['agent_reported_time'] = step.agent_reported_time.strftime(self.TIME_FORMAT)
                 agents_steps[step.paw]['steps'].append(step_report)
@@ -370,7 +373,9 @@ class Operation(FirstClassObjectInterface, BaseObject):
                           operation_metadata=self._get_operation_metadata_for_event_log(),
                           attack_metadata=self._get_attack_metadata_for_event_log(link.ability))
         if output and link.output:
-            event_dict['output'] = self.decode_bytes(file_svc.read_result_file(link.unique))
+            results_dict_b64 = file_svc.read_result_file(link.unique)
+            results_dict_string = self.decode_bytes(results_dict_b64)
+            event_dict['output'] = json.loads(results_dict_string)
         if link.agent_reported_time:
             event_dict['agent_reported_time'] = link.agent_reported_time.strftime(self.TIME_FORMAT)
         return event_dict
