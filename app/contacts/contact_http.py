@@ -15,9 +15,10 @@ class Contact(BaseWorld):
         self.log = self.create_logger('contact_http')
 
     async def start(self):
-        digits='a1b2c3d4e5f6g7h8i9j0'
-        for i in range(10):
-                self.app_svc.application.router.add_route('POST', '/'+digits[i]+'beacon'+digits[i+10], self._beacon)
+        digits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
+        for i in range(len(digits)):
+                self.app_svc.application.router.add_route('POST', '/beacon'+digits[i], self._beacon)
+        #self.app_svc.application.router.add_route('POST', '/beacon', self._beacon)
 
     async def _beacon(self, request):
         try:
